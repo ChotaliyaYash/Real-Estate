@@ -18,23 +18,19 @@ import userRoute from './routers/userRoute';
 app.use('/api/v1', userRoute);
 
 // Error handling
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    let statusCode;
-    switch (err.message) {
-        case "bad request":
-            statusCode = 400;
-            break;
-        default:
-            statusCode = 500;
-            break;
-    }
+type errorReturn = {
+    statusCode: number,
+    error: Error,
+}
 
-    const message = err.message ?? "Internal server error";
+app.use((err: errorReturn, req: Request, res: Response, next: NextFunction) => {
+    const statusCode = err.statusCode ?? 500;
 
-    res.status(statusCode).json({
+    const message = err.error.message ?? "Internal server error";
+
+    return res.status(statusCode).json({
         success: false,
         message,
-
     })
 })
 

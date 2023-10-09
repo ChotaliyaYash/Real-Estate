@@ -1,29 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
 import { createUser } from '../models/userModel';
 import bcrypt from 'bcryptjs';
+import { errorHandler } from '../utils/errorHandler';
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body);
         const { username, email, password } = req.body;
 
         if (!username || !email || !password) {
-            const error = new Error("Please fill all the fields");
-            error.name = "bad request";
-            throw error;
+            next(errorHandler(400, "all fields are required"));
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await createUser(username, email, hashedPassword);
 
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             message: "User created successfully",
             data: user,
         });
-
     } catch (error) {
-        next(error);
+        next(errorHandler(500, error as string));
     }
 }

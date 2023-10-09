@@ -29,14 +29,12 @@ const User = mongoose.model("User", userSchema);
 
 // create user
 export const createUser = async (username: string, email: string, password: string) => {
-    console.log(username, email, password);
     try {
         const user = new User({
             username,
             email,
             password,
         });
-        console.log(username, email, password);
 
 
         await user.save();
