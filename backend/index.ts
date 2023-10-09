@@ -18,15 +18,28 @@ import userRoute from './routers/userRoute';
 app.use('/api/v1', userRoute);
 
 // Error handling
-type errorReturn = {
-    statusCode: number,
-    error: Error,
-}
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    let statusCode: number;
 
-app.use((err: errorReturn, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = err.statusCode ?? 500;
+    switch (err.name) {
+        case "validationerror":
+            statusCode = 403;
+            break;
 
-    const message = err.error.message ?? "Internal server error";
+        case "notfounderror":
+            statusCode = 404;
+            break;
+
+        case "unauthorizederror":
+            statusCode = 401;
+            break;
+
+        default:
+            statusCode = 500;
+            break;
+    }
+
+    const message = err.message ?? "Something went wrong";
 
     return res.status(statusCode).json({
         success: false,

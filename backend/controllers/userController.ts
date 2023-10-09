@@ -1,19 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import { createUser } from '../models/userModel';
-import bcrypt from 'bcryptjs';
-import { errorHandler } from '../utils/errorHandler';
+import { authUser, createUser } from '../models/userModel';
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { username, email, password } = req.body;
 
         if (!username || !email || !password) {
-            next(errorHandler(400, "all fields are required"));
+            const error = new Error("Please provide all required fields");
+            error.name = "validationerror";
+            throw error;
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await createUser(username, email, hashedPassword);
+        const user = await createUser(username, email, password);
 
         return res.status(201).json({
             success: true,
@@ -21,6 +19,35 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
             data: user,
         });
     } catch (error) {
-        next(errorHandler(500, error as string));
+        next(error);
+    }
+}
+
+export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            const error = new Error("Please provide all required fields");
+            error.name = "validationerror";
+            throw error;
+        }
+
+        const data = await authUser(email, password);
+
+        return res
+            .cookie("token", data.token, {
+                httpOnly: true,
+                expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            })
+            .status(200).json({
+                success: true,
+                message: "User logged in successfully",
+                data: data.user,
+            })
+
+    } catch (error) {
+        next(error);
     }
 }
