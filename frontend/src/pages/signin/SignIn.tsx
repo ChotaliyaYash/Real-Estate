@@ -1,7 +1,8 @@
-import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
-
+import { AppDispatch, RootState } from '../../app/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { signupAsyncThunk } from '../../features/user/userSlice'
 // sign up form data type
 interface formDataType {
     username?: string,
@@ -12,10 +13,11 @@ interface formDataType {
 const SignIn = () => {
 
     const [formData, setFormData] = useState<formDataType>({})
-    const [error, setError] = useState<catchErrorType>()
-    const [loading, setLoading] = useState<boolean>(false);
+
+    const { error, loading } = useSelector((state: RootState) => state.user);
 
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
 
     const handelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -29,23 +31,14 @@ const SignIn = () => {
 
         if (!formData.username || !formData.email || !formData.password) return;
 
-        setLoading(true);
-        try {
-            const res = await axios.post("/api/v1/register", formData);
-            const data = res.data;
+        const res = await dispatch(signupAsyncThunk({
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+        }));
 
-            if (data.success === false) {
-                setError(data.message);
-                setLoading(false);
-            }
-
-            console.log(data);
-            setLoading(false);
+        if (res.meta.requestStatus === "fulfilled") {
             navigate("/login");
-
-        } catch (error) {
-            setLoading(false);
-            setError(error as catchErrorType);
         }
     }
 

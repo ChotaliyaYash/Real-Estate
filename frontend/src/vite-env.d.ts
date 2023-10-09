@@ -18,4 +18,19 @@ interface errorDataType {
     success: boolean,
 }
 
-// 
+// user reponse type
+export interface userResponseType {
+    success: boolean
+    message: string
+    data: Data
+}
+
+// User
+export interface userDataType {
+    _id: string
+    username: string
+    email: string
+    password: string
+    createdAt: string
+    updatedAt: string
+}

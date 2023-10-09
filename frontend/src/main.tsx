@@ -1,7 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+
+import './index.css'
 
 // Import pages
 import App from './App.tsx'
@@ -11,6 +13,9 @@ import SignIn from './pages/signin/SignIn.tsx'
 import Home from './pages/home/Home.tsx'
 import Profile from './pages/profile/Profile.tsx'
 import AddState from './pages/add/AddState.tsx'
+
+import { store } from './app/store.ts'
+import { getUserFromStorage } from './features/user/userSlice.ts'
 
 // Router creation
 const router = createBrowserRouter([
@@ -46,8 +51,12 @@ const router = createBrowserRouter([
   },
 ])
 
+store.dispatch(getUserFromStorage());
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>,
 )
