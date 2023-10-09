@@ -1,12 +1,5 @@
 /// <reference types="vite/client" />
 
-// sign up form data type
-interface formDataType {
-    username?: string,
-    email?: string,
-    password?: string,
-}
-
 // error type
 interface catchErrorType {
     message: string,
