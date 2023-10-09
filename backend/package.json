@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "realestate",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/bcryptjs": "^2.4.4",
     "@types/express": "^4.17.18",
     "@types/mongoose": "^5.11.97",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mongoose": "^7.6.0",

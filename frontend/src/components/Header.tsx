@@ -42,8 +42,6 @@ const Header = () => {
                         </NavLink>
                     </li>
                 </ul>
-
-
             </div>
         </header>
     )
