@@ -20,7 +20,7 @@ const Header = () => {
                 </form>
 
                 {/* Options */}
-                <ul className='flex items-center'>
+                <ul className='flex items-center text-sm sm:text-base'>
                     <li>
                         <NavLink to='/' className={({ isActive }) => `${isActive ? "text-slate-700" : "text-slate-500"} hidden sm:inline hover:underline mr-4`}>
                             Home

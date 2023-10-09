@@ -9,13 +9,27 @@ const app = express();
 const port = process.env.PORT ?? 3000;
 const url: string = process.env.MONGO_URI ?? "";
 
+app.use(express.json());
+
 // Routes
 
+// @desc    user routes
+import userRoute from './routers/userRoute';
+app.use('/api/v1', userRoute);
 
 // Error handling
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = res.statusCode ?? 500;
-    const message = res.statusCode ?? "Internal server error";
+    let statusCode;
+    switch (err.message) {
+        case "bad request":
+            statusCode = 400;
+            break;
+        default:
+            statusCode = 500;
+            break;
+    }
+
+    const message = err.message ?? "Internal server error";
 
     res.status(statusCode).json({
         success: false,

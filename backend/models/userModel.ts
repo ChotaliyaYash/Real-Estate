@@ -3,14 +3,15 @@ import mongoose from "mongoose";
 // Model creation
 const userSchema = new mongoose.Schema(
     {
-        name: {
+        username: {
             type: String,
-            required: [true, "Name is required"]
+            required: [true, "Name is required"],
+            unique: [true, "Name already exists"],
         },
         email: {
             type: String,
             required: [true, "Email is required"],
-            unique: true,
+            unique: [true, "Email already exists"]
         },
         password: {
             type: String,
@@ -27,18 +28,21 @@ const User = mongoose.model("User", userSchema);
 // creating funcationality
 
 // create user
-export const createUser = async (name: string, email: string, password: string) => {
+export const createUser = async (username: string, email: string, password: string) => {
+    console.log(username, email, password);
     try {
         const user = new User({
-            name,
+            username,
             email,
             password,
         });
+        console.log(username, email, password);
+
 
         await user.save();
 
         return user;
-    } catch (error) {
+    } catch (error: any) {
         throw new Error(error);
     }
 };
