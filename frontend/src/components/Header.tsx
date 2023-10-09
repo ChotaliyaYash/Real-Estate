@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => {
+
+    const [searchKey, setSearchKey] = useState<string>("");
+
     return (
         <header className="bg-slate-200 shadow-md">
             <div className="max-w-6xl mx-auto flex justify-between p-3">
@@ -15,7 +19,7 @@ const Header = () => {
 
                 {/* Search */}
                 <form className="bg-slate-100 p-2 sm:p-3 rounded-lg flex items-center gap-3">
-                    <input type="text" placeholder="Search..." className="bg-transparent focus:outline-none outline-none w-24 sm:w-64" />
+                    <input value={searchKey} onChange={e => setSearchKey(e.target.value)} type="text" placeholder="Search..." className="bg-transparent focus:outline-none outline-none w-24 sm:w-64" />
                     <FaSearch className="text-slate-600" />
                 </form>
 
