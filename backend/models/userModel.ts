@@ -72,12 +72,11 @@ export const authUser = async (email: string, password: string) => {
 
         const token = jwt.sign(
             {
-                id: user._id,
-                email: user.email
+                id: user._id
             },
             process.env.JWT_SECRET ?? "",
             {
-                expiresIn: "30d"
+                expiresIn: "24h"
             }
         );
 
@@ -111,12 +110,11 @@ export const googleSingUp = async (username: string, email: string, avatar: stri
         // if user already exists, generate token for that user
         const token = jwt.sign(
             {
-                id: user._id,
-                email: user.email
+                id: user._id
             },
             process.env.JWT_SECRET ?? "",
             {
-                expiresIn: "30d"
+                expiresIn: "24h"
             }
         );
 
@@ -160,6 +158,16 @@ export const updateUserDetail = async (id: string, username: string, email: stri
 
             if (updateEmailUser) {
                 const error = new Error("Email already exists");
+                error.name = "validationerror";
+                throw error;
+            }
+        }
+
+        if (user.username !== username) {
+            const updatedUsernameUser = await User.findOne({ username });
+
+            if (updatedUsernameUser) {
+                const error = new Error("Username already exists");
                 error.name = "validationerror";
                 throw error;
             }

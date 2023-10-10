@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './utils/database'
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const port = process.env.PORT ?? 3000;
 const url: string = process.env.MONGO_URI ?? "";
 
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 

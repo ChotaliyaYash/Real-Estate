@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../../app/store"
-import { deleteAccountAsyncThunk, signOut, updateUserAsyncThunk } from '../../features/user/userSlice'
+import { deleteAccountAsyncThunk, signOutUserAsyncThunk, updateUserAsyncThunk } from '../../features/user/userSlice'
 import { useNavigate } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
@@ -14,6 +14,7 @@ const Profile = () => {
     // formData
     const [formData, setFormData] = useState<userDataType>(currentUser!);
     const [password, setPassword] = useState<string>("");
+    const [updated, setUpdated] = useState<boolean>(false);
 
     // File upload things
     const [file, setFile] = useState<File | undefined>(undefined)
@@ -63,9 +64,12 @@ const Profile = () => {
         }
     }
 
-    const handelSignOut = () => {
-        dispatch(signOut())
-        navigate("/")
+    const handelSignOut = async () => {
+        const res = await dispatch(signOutUserAsyncThunk())
+
+        if (res.meta.requestStatus === "fulfilled") {
+            navigate("/")
+        }
     }
 
     const handelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +79,7 @@ const Profile = () => {
         });
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const data: userDataType = {
@@ -83,8 +87,14 @@ const Profile = () => {
             password,
         }
 
-        dispatch(updateUserAsyncThunk(data));
+        const res = await dispatch(updateUserAsyncThunk(data));
 
+        if (res.meta.requestStatus === "fulfilled") {
+            setUpdated(true);
+            // setTimeout(() => {
+            //     setUpdated(false);
+            // }, 3000);
+        }
     }
 
     return (
@@ -128,6 +138,7 @@ const Profile = () => {
             </div>
 
             {error && <p className="text-red-700 mt-5">{error.response.data.message}</p>}
+            {updated && <p className="text-green-700 mt-5">User is updated successfully!</p>}
         </div >
     )
 }

@@ -85,12 +85,28 @@ export const deleteAUser = async (req: Request, res: Response, next: NextFunctio
     try {
         const { id } = req.params;
 
+        const { verifiedId } = req.body;
+
+        if (verifiedId !== id) {
+            const error = new Error("User not authorized");
+            error.name = "unauthorizederror";
+            throw error;
+        }
+
+        if (!id) {
+            const error = new Error("Please provide all required fields");
+            error.name = "validationerror";
+            throw error;
+        }
+
         await deleteUser(id);
 
-        return res.status(200).json({
-            success: true,
-            message: "User deleted successfully",
-        });
+        return res
+            .clearCookie("token")
+            .status(200).json({
+                success: true,
+                message: "User deleted successfully",
+            });
     } catch (error) {
         next(error);
     }
@@ -100,6 +116,14 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     try {
         const { id } = req.params;
         const { username, email, avatar, password } = req.body;
+
+        const { verifiedId } = req.body;
+
+        if (verifiedId !== id) {
+            const error = new Error("User not authorized");
+            error.name = "unauthorizederror";
+            throw error;
+        }
 
         if (!id) {
             const error = new Error("Please provide all required fields");
@@ -114,6 +138,19 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
             message: "User updated successfully",
             data: user,
         });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const signOutUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        return res
+            .clearCookie("token")
+            .status(200).json({
+                success: true,
+                message: "User logged out successfully",
+            });
     } catch (error) {
         next(error);
     }

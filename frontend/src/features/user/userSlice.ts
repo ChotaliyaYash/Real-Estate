@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 import { catchErrorType, userDataType, userResponseType } from '../../vite-env'
 
-import { loginCall, signupcall, signupWithGoogleCall, deleteUserCall, updateUserCall } from './userApi'
+import { loginCall, signupcall, signupWithGoogleCall, deleteUserCall, updateUserCall, signOutCall } from './userApi'
 
 export interface CounterState {
     error: catchErrorType | null,
@@ -82,6 +82,19 @@ export const deleteAccountAsyncThunk = createAsyncThunk(
     }
 )
 
+export const signOutUserAsyncThunk = createAsyncThunk(
+    'user/signout',
+    async () => {
+        try {
+            const res = await signOutCall();
+            const resData: userResponseType = res.data;
+            return resData.data;
+        } catch (error) {
+            return error;
+        }
+    }
+)
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -89,10 +102,6 @@ export const userSlice = createSlice({
         getUserFromStorage: (state) => {
             localStorage.getItem('user') && (state.currentUser = JSON.parse(localStorage.getItem('user') as string));
         },
-        signOut: (state) => {
-            localStorage.removeItem('user');
-            state.currentUser = null;
-        }
     },
     extraReducers: (builder) => {
         builder
@@ -176,10 +185,26 @@ export const userSlice = createSlice({
                 state.error = action.payload as catchErrorType;
             })
 
+            // sign out
+            .addCase(signOutUserAsyncThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(signOutUserAsyncThunk.fulfilled, (state) => {
+                localStorage.removeItem('user');
+
+                state.loading = false;
+                state.currentUser = null;
+                state.error = null;
+            })
+            .addCase(signOutUserAsyncThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as catchErrorType;
+            })
+
         // 
     },
 })
 
-export const { getUserFromStorage, signOut } = userSlice.actions
+export const { getUserFromStorage } = userSlice.actions
 
 export default userSlice.reducer

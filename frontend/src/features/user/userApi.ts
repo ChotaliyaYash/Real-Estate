@@ -20,3 +20,7 @@ export const deleteUserCall = (data: string) => {
 export const updateUserCall = (data: userDataType) => {
     return axios.patch(`/api/v1/user/update/${data._id}`, data);
 }
+
+export const signOutCall = () => {
+    return axios.get(`/api/v1/user/signout`);
+}

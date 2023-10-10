@@ -40,6 +40,11 @@ const Header = () => {
                         </NavLink>
                     </li>
                     <li>
+                        <NavLink to='/view' className={({ isActive }) => `${isActive ? "text-slate-700" : "text-slate-500"} hidden sm:inline hover:underline mr-4`}>
+                            View
+                        </NavLink>
+                    </li>
+                    <li>
                         <NavLink to='/add' className={({ isActive }) => `${isActive ? "text-slate-700" : "text-slate-500"} hidden sm:inline hover:underline mr-4`}>
                             Add
                         </NavLink>
@@ -49,7 +54,7 @@ const Header = () => {
                             ?
                             <>
                                 <Link to="/profile">
-                                    <img src={currentUser.avatar} alt={currentUser.username} className="w-8 object-cover h-8 rounded-full" />
+                                    <img src={currentUser.avatar} alt={currentUser.username} className="w-8 object-cover h-8 sm:h-10 sm:w-10 rounded-full" />
                                 </Link>
                             </>
                             :
