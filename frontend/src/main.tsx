@@ -16,6 +16,7 @@ import AddState from './pages/add/AddState.tsx'
 
 import { store } from './app/store.ts'
 import { getUserFromStorage } from './features/user/userSlice.ts'
+import PrivateProfile from './pages/profile/PrivateProfile.tsx'
 
 // Router creation
 const router = createBrowserRouter([
@@ -41,7 +42,13 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile',
-        element: <Profile />
+        element: <PrivateProfile />,
+        children: [
+          {
+            path: '',
+            element: <Profile />
+          }
+        ]
       },
       {
         path: '/add',

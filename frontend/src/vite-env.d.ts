@@ -30,6 +30,7 @@ export interface userDataType {
     _id: string
     username: string
     email: string
+    avatar: string
     password: string
     createdAt: string
     updatedAt: string

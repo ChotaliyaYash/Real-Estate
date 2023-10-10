@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
+import { RootState } from '../app/store';
 
 const Header = () => {
 
     const [searchKey, setSearchKey] = useState<string>("");
+
+    const { currentUser } = useSelector((state: RootState) => state.user);
 
     return (
         <header className="bg-slate-200 shadow-md">
@@ -41,9 +45,18 @@ const Header = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to='/login' className={({ isActive }) => `${isActive ? "text-slate-700" : "text-slate-500"} hover:underline`}>
-                            Sign In
-                        </NavLink>
+                        {currentUser
+                            ?
+                            <>
+                                <Link to="/profile">
+                                    <img src={currentUser.avatar} alt={currentUser.username} className="w-8 object-cover h-8 rounded-full" />
+                                </Link>
+                            </>
+                            :
+                            <NavLink to='/login' className={({ isActive }) => `${isActive ? "text-slate-700" : "text-slate-500"} hover:underline`}>
+                                Sign In
+                            </NavLink>
+                        }
                     </li>
                 </ul>
             </div>

@@ -47,9 +47,6 @@ export const signupWithGoogleAsyncThunk = createAsyncThunk(
         try {
             const res = await signupWithGoogleCall(data);
             const resData: userResponseType = res.data;
-
-            console.log(resData.data);
-
             return resData.data;
         } catch (error) {
             return rejectWithValue(error);
