@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../../app/store"
 import { loginAsyncThunk } from "../../features/user/userSlice"
+import OAuth from "../../components/OAuth"
 
 // sign up form data type
 interface formDataType {
@@ -50,11 +51,11 @@ const LogIn = () => {
                 <input type="password" placeholder="password" value={formData.password} id="password" className="border p-3 rounded-lg" onChange={handelChange} />
 
                 <button className="uppercase hover:opacity-95 disabled:opacity-80 text-white bg-slate-700 p-3 rounded-lg" disabled={loading}>{loading ? "Loading..." : "Sign In"}</button>
+
+                {/* Google auth */}
+                <OAuth />
             </form>
 
-            <div className="flex flex-col mt-4">
-                <button className="uppercase hover:opacity-95 disabled:opacity-80 text-white bg-red-700 p-3 rounded-lg" disabled={loading}>Continue with Google</button>
-            </div>
 
             <div className="mt-5 flex gap-2">
                 <span>Don't have an account?</span>

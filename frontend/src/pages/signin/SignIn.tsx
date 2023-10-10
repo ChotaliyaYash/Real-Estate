@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { AppDispatch, RootState } from '../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { signupAsyncThunk } from '../../features/user/userSlice'
+import OAuth from '../../components/OAuth';
 // sign up form data type
 interface formDataType {
     username?: string,
@@ -42,13 +43,6 @@ const SignIn = () => {
         }
     }
 
-    const handelGoogleSubmit = (e: React.FormEvent<HTMLButtonElement>): void => {
-        e.preventDefault();
-
-        console.log("Google");
-
-    }
-
     return (
         <div className="max-w-lg mx-auto p-3 min-h-screen">
             <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
@@ -58,11 +52,11 @@ const SignIn = () => {
                 <input type="password" value={formData.password} placeholder="password" className="border p-3 rounded-lg" id="password" onChange={handelChange} />
 
                 <button className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80" disabled={loading}>{loading ? "Loading..." : "Sign Up"}</button>
+
+                {/* Google Auth */}
+                <OAuth />
             </form>
 
-            <div className='flex mt-4 flex-col'>
-                <button onClick={handelGoogleSubmit} className="bg-red-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80" disabled={loading}>Continue with Google</button>
-            </div>
 
             <div className='flex gap-2 mt-5'>
                 <p>Have an account?</p>

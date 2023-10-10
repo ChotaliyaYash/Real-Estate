@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { catchErrorType, userDataType, userResponseType } from '../../vite-env'
-import { loginCall, signupcall } from './userApi'
+import { loginCall, signupcall, signupWithGoogleCall } from './userApi'
 
 export interface CounterState {
     error: catchErrorType | null,
@@ -41,6 +41,22 @@ export const signupAsyncThunk = createAsyncThunk(
     }
 )
 
+export const signupWithGoogleAsyncThunk = createAsyncThunk(
+    'user/google',
+    async (data: { username: string, email: string, avatar: string }, { rejectWithValue }) => {
+        try {
+            const res = await signupWithGoogleCall(data);
+            const resData: userResponseType = res.data;
+
+            console.log(resData.data);
+
+            return resData.data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+)
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -51,6 +67,7 @@ export const userSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // login
             .addCase(loginAsyncThunk.pending, (state) => {
                 state.loading = true;
             })
@@ -67,6 +84,7 @@ export const userSlice = createSlice({
                 state.error = action.payload as catchErrorType;
             })
 
+            // signup
             .addCase(signupAsyncThunk.pending, (state) => {
                 state.loading = true;
             })
@@ -75,6 +93,23 @@ export const userSlice = createSlice({
                 state.error = null;
             })
             .addCase(signupAsyncThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as catchErrorType;
+            })
+
+            // signup with google
+            .addCase(signupWithGoogleAsyncThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(signupWithGoogleAsyncThunk.fulfilled, (state, action: PayloadAction<userDataType>) => {
+                // local storage
+                localStorage.setItem('user', JSON.stringify(action.payload));
+
+                state.loading = false;
+                state.currentUser = action.payload;
+                state.error = null;
+            })
+            .addCase(signupWithGoogleAsyncThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as catchErrorType;
             })

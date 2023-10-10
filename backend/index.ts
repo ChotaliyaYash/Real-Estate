@@ -15,7 +15,7 @@ app.use(express.json());
 
 // @desc    user routes
 import userRoute from './routers/userRoute';
-app.use('/api/v1', userRoute);
+app.use('/api/v1/user', userRoute);
 
 // Error handling
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

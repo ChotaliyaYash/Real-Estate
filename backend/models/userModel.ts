@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: [true, "Password is required"],
+        },
+        avatar: {
+            type: String,
+            default: "https://as1.ftcdn.net/v2/jpg/03/53/11/00/1000_F_353110097_nbpmfn9iHlxef4EDIhXB1tdTD0lcWhG9.jpg"
         }
     },
     {
@@ -81,5 +85,62 @@ export const authUser = async (email: string, password: string) => {
 
     } catch (error: any) {
         throw error;
+    }
+}
+
+export const googleSingUp = async (username: string, email: string, avatar: string) => {
+    try {
+        let user = await User.findOne({ email });
+
+        // if user doesn't exist, create a new user & generate token for that user
+        if (!user) {
+            const password = Math.random().toString(36).slice(-8);
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            user = new User({
+                username,
+                email,
+                password: hashedPassword,
+                avatar
+            });
+
+            await user.save();
+        }
+
+        // if user already exists, generate token for that user
+        const token = jwt.sign(
+            {
+                id: user._id,
+                email: user.email
+            },
+            process.env.JWT_SECRET ?? "",
+            {
+                expiresIn: "30d"
+            }
+        );
+
+        return { token, user };
+
+    } catch (error: any) {
+        throw error;
+    }
+}
+
+export const deleteUser = async (id: string) => {
+    try {
+
+        const user = await User.findById(id);
+
+        if (!user) {
+            const error = new Error("User not found");
+            error.name = "notfounderror";
+            throw error;
+        }
+
+        await User.findByIdAndDelete(id);
+
+    } catch (error) {
+        throw error
     }
 }

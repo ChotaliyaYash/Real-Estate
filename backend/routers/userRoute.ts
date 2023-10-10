@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser } from '../controllers/userController'
+import { registerUser, loginUser, googleSignUpUser, deleteAUser } from '../controllers/userController'
 
 // variabels declaration
 const router = express.Router();
@@ -7,11 +7,19 @@ const router = express.Router();
 // Routes
 
 // @desc    Register user
-// @link    /api/v1/registe
+// @link    /api/v1/user/registe
 router.route('/register').post(registerUser);
 
 // @desc    Login user
-// @link    /api/v1/login
+// @link    /api/v1/user/login
 router.route('/login').post(loginUser);
+
+// @desc    Google SignIn user
+// @link    /api/v1/user/google
+router.route('/google').post(googleSignUpUser);
+
+// @desc    Login user
+// @link    /api/v1/user/delete/:id
+router.route('/delete/:id').delete(deleteAUser);
 
 export default router;
