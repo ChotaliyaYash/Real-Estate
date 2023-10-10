@@ -46,6 +46,7 @@ const LogIn = () => {
     return (
         <div className="min-h-screen max-w-lg mx-auto p-3">
             <h1 className="text-center text-3xl font-semibold my-7">Sign In</h1>
+
             <form className="flex flex-col gap-4" onSubmit={handelFormSubmit}>
                 <input type="email" placeholder="email" value={formData.email} id="email" className="border p-3 rounded-lg" onChange={handelChange} />
                 <input type="password" placeholder="password" value={formData.password} id="password" className="border p-3 rounded-lg" onChange={handelChange} />
@@ -55,7 +56,6 @@ const LogIn = () => {
                 {/* Google auth */}
                 <OAuth />
             </form>
-
 
             <div className="mt-5 flex gap-2">
                 <span>Don't have an account?</span>

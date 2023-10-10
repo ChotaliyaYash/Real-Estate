@@ -144,3 +144,42 @@ export const deleteUser = async (id: string) => {
         throw error
     }
 }
+
+export const updateUserDetail = async (id: string, username: string, email: string, avatar: string, password?: string) => {
+    try {
+        let user = await User.findById(id);
+
+        if (!user) {
+            const error = new Error("User not found");
+            error.name = "notfounderror";
+            throw error;
+        }
+
+        if (user.email !== email) {
+            const updateEmailUser = await User.findOne({ email });
+
+            if (updateEmailUser) {
+                const error = new Error("Email already exists");
+                error.name = "validationerror";
+                throw error;
+            }
+        }
+
+        let hashedPassword: string | null = null;
+
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        user.username = username ?? user.username;
+        user.email = email ?? user.email;
+        user.password = hashedPassword ?? user.password;
+        user.avatar = avatar ?? user.avatar;
+
+        await user.save();
+
+        return user;
+    } catch (error) {
+        throw error
+    }
+}

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { authUser, createUser, deleteUser, googleSingUp } from '../models/userModel';
+import { authUser, createUser, deleteUser, googleSingUp, updateUserDetail } from '../models/userModel';
 
 export const registerUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -90,6 +90,29 @@ export const deleteAUser = async (req: Request, res: Response, next: NextFunctio
         return res.status(200).json({
             success: true,
             message: "User deleted successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const { username, email, avatar, password } = req.body;
+
+        if (!id) {
+            const error = new Error("Please provide all required fields");
+            error.name = "validationerror";
+            throw error;
+        }
+
+        const user = await updateUserDetail(id, username, email, avatar, password);
+
+        return res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            data: user,
         });
     } catch (error) {
         next(error);

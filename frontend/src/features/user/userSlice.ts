@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+
 import { catchErrorType, userDataType, userResponseType } from '../../vite-env'
-import { loginCall, signupcall, signupWithGoogleCall } from './userApi'
+
+import { loginCall, signupcall, signupWithGoogleCall, deleteUserCall, updateUserCall } from './userApi'
 
 export interface CounterState {
     error: catchErrorType | null,
@@ -54,12 +56,42 @@ export const signupWithGoogleAsyncThunk = createAsyncThunk(
     }
 )
 
+export const updateUserAsyncThunk = createAsyncThunk(
+    'user/update',
+    async (data: userDataType, { rejectWithValue }) => {
+        try {
+            const res = await updateUserCall(data);
+            const resData: userResponseType = res.data;
+            return resData.data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+)
+
+export const deleteAccountAsyncThunk = createAsyncThunk(
+    'user/delete',
+    async (data: string, { rejectWithValue }) => {
+        try {
+            const res = await deleteUserCall(data);
+            const resData: userResponseType = res.data;
+            return resData.data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+)
+
 export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
         getUserFromStorage: (state) => {
             localStorage.getItem('user') && (state.currentUser = JSON.parse(localStorage.getItem('user') as string));
+        },
+        signOut: (state) => {
+            localStorage.removeItem('user');
+            state.currentUser = null;
         }
     },
     extraReducers: (builder) => {
@@ -110,9 +142,44 @@ export const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as catchErrorType;
             })
+
+            // delete account
+            .addCase(deleteAccountAsyncThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(deleteAccountAsyncThunk.fulfilled, (state) => {
+                localStorage.removeItem('user');
+
+                state.loading = false;
+                state.currentUser = null;
+                state.error = null;
+            })
+            .addCase(deleteAccountAsyncThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as catchErrorType;
+            })
+
+            // update user
+            .addCase(updateUserAsyncThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateUserAsyncThunk.fulfilled, (state, action: PayloadAction<userDataType>) => {
+                // local storage
+                localStorage.setItem('user', JSON.stringify(action.payload));
+
+                state.loading = false;
+                state.currentUser = action.payload;
+                state.error = null;
+            })
+            .addCase(updateUserAsyncThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as catchErrorType;
+            })
+
+        // 
     },
 })
 
-export const { getUserFromStorage } = userSlice.actions
+export const { getUserFromStorage, signOut } = userSlice.actions
 
 export default userSlice.reducer
