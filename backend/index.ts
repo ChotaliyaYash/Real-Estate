@@ -19,6 +19,10 @@ app.use(cookieParser());
 import userRoute from './routers/userRoute';
 app.use('/api/v1/user', userRoute);
 
+// @desc    list routes
+import listernRouter from './routers/listRouter';
+app.use('/api/v1/listing', listernRouter);
+
 // Error handling
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     let statusCode: number;
