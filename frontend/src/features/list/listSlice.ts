@@ -6,13 +6,15 @@ import { addListCall, getListCall } from './listApi'
 const initialState: listStateType = {
     error: null,
     loading: false,
-    listing: null,
+    listing: [],
 }
 
 export const addListAsyncThunk = createAsyncThunk(
     "list/add",
     async (data: listModelType, { rejectWithValue }) => {
         try {
+            console.log("data", data);
+
             const res = await addListCall(data);
             const resData: listResponseType = res.data;
             return resData.data;

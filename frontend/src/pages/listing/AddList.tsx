@@ -1,7 +1,11 @@
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
-import { useState } from "react"
+import React, { useState } from "react"
 import { app } from "../../utils/firebaseSetup";
 import { RiDeleteBin7Fill } from 'react-icons/ri'
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../app/store";
+import { addListAsyncThunk } from '../../features/list/listSlice'
+import { useNavigate } from "react-router-dom";
 
 const AddList = () => {
 
@@ -9,8 +13,8 @@ const AddList = () => {
         name: "",
         description: "",
         address: "",
-        regularPrice: 0,
-        discountedPrice: 0,
+        regularPrice: 50,
+        discountedPrice: 50,
         bathrooms: 1,
         bedrooms: 1,
         furnished: false,
@@ -20,6 +24,11 @@ const AddList = () => {
         imageUrls: [],
         userRef: ""
     })
+
+    const { error, loading } = useSelector((state: RootState) => state.list);
+
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
 
     // file uploadings
     const [files, setFiles] = useState<FileList | null>();
@@ -90,15 +99,36 @@ const AddList = () => {
     }
 
     const handelChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value })
+        if (e.target.id === "sell" || e.target.id === "rent") {
+            setFormData({ ...formData, type: e.target.id })
+        };
+
+        if (e.target.id === "parking" || e.target.id === "furnished" || e.target.id === "offer") {
+            setFormData({ ...formData, [e.target.id]: !formData[e.target.id] })
+        };
+
+        if (e.target.id === "bedrooms" || e.target.id === "bathrooms" || e.target.id === "regularPrice" || e.target.id === "discountedPrice") {
+            setFormData({ ...formData, [e.target.id]: Number(e.target.value) })
+        };
+
+        if (e.target.id === "name" || e.target.id === "description" || e.target.id === "address") {
+            setFormData({ ...formData, [e.target.id]: e.target.value })
+        };
     }
 
-    const handelSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handelSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log(formData);
-    }
+        if (formData.imageUrls.length === 0) {
+            setImageUploadError("Please upload at least one image");
+            return;
+        };
 
+        const res = await dispatch(addListAsyncThunk(formData));
+
+        res.meta.requestStatus === "fulfilled" && navigate("/");
+
+    }
 
     return (
         <main className="p-3 max-w-4xl mx-auto min-h-screen">
@@ -117,31 +147,31 @@ const AddList = () => {
                     <div className="flex flex-wrap gap-6">
                         {/* sell */}
                         <div className=" flex items-center gap-2">
-                            <input type="checkbox" id="sell" className="w-5" checked={formData.type === "sell"} onChange={() => setFormData({ ...formData, type: "sell" })} />
+                            <input type="checkbox" id="sell" className="w-5" checked={formData.type === "sell"} onChange={handelChange} />
                             <label htmlFor="sell">Sell</label>
                         </div>
 
                         {/* Rent */}
                         <div className=" flex items-center gap-2">
-                            <input type="checkbox" id="rent" className="w-5" checked={formData.type === "rent"} onChange={() => setFormData({ ...formData, type: "rent" })} />
+                            <input type="checkbox" id="rent" className="w-5" checked={formData.type === "rent"} onChange={handelChange} />
                             <label htmlFor="rent">Rent</label>
                         </div>
 
                         {/* Parking spot */}
-                        <div className=" flex items-center gap-2" onChange={() => setFormData({ ...formData, parking: !formData.parking })}>
-                            <input type="checkbox" id="parking" className="w-5" />
+                        <div className=" flex items-center gap-2">
+                            <input type="checkbox" id="parking" className="w-5" checked={formData.parking} onChange={handelChange} />
                             <label htmlFor="parking">Parking spot</label>
                         </div>
 
                         {/* Furnished */}
                         <div className=" flex items-center gap-2">
-                            <input type="checkbox" id="furnished" className="w-5" onChange={() => setFormData({ ...formData, furnished: !formData.furnished })} />
+                            <input type="checkbox" id="furnished" className="w-5" checked={formData.furnished} onChange={handelChange} />
                             <label htmlFor="furnished">Furnished</label>
                         </div>
 
                         {/* Offer */}
                         <div className=" flex items-center gap-2">
-                            <input type="checkbox" id="offer" className="w-5" onChange={() => setFormData({ ...formData, offer: !formData.offer })} />
+                            <input type="checkbox" id="offer" className="w-5" checked={formData.offer} onChange={handelChange} />
                             <label htmlFor="offer">Offer</label>
                         </div>
                     </div>
@@ -193,7 +223,7 @@ const AddList = () => {
 
                     {/* image yploading section */}
                     <div className="flex gap-4">
-                        <input type="file" onChange={e => setFiles(e.target.files)} id="images" accept="image/*" multiple className="p-3 border rounded-lg w-full" />
+                        <input type="file" onChange={e => setFiles(e.target.files)} id="images" accept="image/*" multiple className="p-3 border rounded-lg w-full" required />
                         <button onClick={handelOnUpload} type="button" className="uppercase p-3 text-green-700 border border-green-700 rounded-lg hover:shadow-lg disabled:opacity-80" disabled={imageLoading}>{imageLoading ? "Uploading..." : "Upload"}</button>
                     </div>
 
@@ -217,9 +247,9 @@ const AddList = () => {
                     {imageUploadError && <p className="text-red-700 mt-2">{imageUploadError}</p>}
 
                     {/* submit button */}
-                    <button className="p-3 bg-slate-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80">Create Listing</button>
+                    <button className="p-3 bg-slate-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80" disabled={loading}>{loading ? "Loading..." : "Create Listing"}</button>
 
-                    {/* {error && <p className="text-red-700 mt-5">{error.response.data.message}</p>} */}
+                    {error && <p className="text-red-700 mt-5">{error.response.data.message}</p>}
                 </div>
 
             </form>
