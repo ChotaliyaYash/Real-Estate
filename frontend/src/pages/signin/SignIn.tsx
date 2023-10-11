@@ -47,9 +47,9 @@ const SignIn = () => {
         <div className="max-w-lg mx-auto p-3 min-h-screen">
             <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
             <form className="flex flex-col gap-4" onSubmit={handelFormSubmit}>
-                <input type="text" value={formData.username} placeholder="username" className="border p-3 rounded-lg" id="username" onChange={handelChange} />
-                <input type="email" value={formData.email} placeholder="email" className="border p-3 rounded-lg" id="email" onChange={handelChange} />
-                <input type="password" value={formData.password} placeholder="password" className="border p-3 rounded-lg" id="password" onChange={handelChange} />
+                <input type="text" value={formData.username} placeholder="username" className="border p-3 rounded-lg" id="username" onChange={handelChange} required />
+                <input type="email" value={formData.email} placeholder="email" className="border p-3 rounded-lg" id="email" onChange={handelChange} required />
+                <input type="password" value={formData.password} placeholder="password" className="border p-3 rounded-lg" id="password" onChange={handelChange} required minLength={6} maxLength={20} />
 
                 <button className="bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80" disabled={loading}>{loading ? "Loading..." : "Sign Up"}</button>
 

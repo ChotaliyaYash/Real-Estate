@@ -1,17 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import { catchErrorType, userDataType, userResponseType } from '../../vite-env'
-
 import { loginCall, signupcall, signupWithGoogleCall, deleteUserCall, updateUserCall, signOutCall } from './userApi'
 
-export interface CounterState {
-    error: catchErrorType | null,
-    loading: boolean,
-    currentUser: userDataType | null
-}
-
-const initialState: CounterState = {
+const initialState: userStateType = {
     error: null,
     loading: false,
     currentUser: null,

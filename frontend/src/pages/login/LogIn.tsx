@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-// import { catchErrorType } from "../../vite-env"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../../app/store"
 import { loginAsyncThunk } from "../../features/user/userSlice"
@@ -48,8 +47,8 @@ const LogIn = () => {
             <h1 className="text-center text-3xl font-semibold my-7">Sign In</h1>
 
             <form className="flex flex-col gap-4" onSubmit={handelFormSubmit}>
-                <input type="email" placeholder="email" value={formData.email} id="email" className="border p-3 rounded-lg" onChange={handelChange} />
-                <input type="password" placeholder="password" value={formData.password} id="password" className="border p-3 rounded-lg" onChange={handelChange} />
+                <input type="email" placeholder="email" value={formData.email} id="email" className="border p-3 rounded-lg" onChange={handelChange} required />
+                <input type="password" placeholder="password" value={formData.password} id="password" className="border p-3 rounded-lg" onChange={handelChange} required minLength={6} maxLength={20} />
 
                 <button className="uppercase hover:opacity-95 disabled:opacity-80 text-white bg-slate-700 p-3 rounded-lg" disabled={loading}>{loading ? "Loading..." : "Sign In"}</button>
 

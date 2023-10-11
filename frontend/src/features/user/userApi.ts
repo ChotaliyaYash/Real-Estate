@@ -1,5 +1,4 @@
 import axios from "axios"
-import { userDataType } from "../../vite-env"
 
 export const loginCall = (data: { email: string, password: string }) => {
     return axios.post('/api/v1/user/login', data)

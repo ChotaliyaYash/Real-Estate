@@ -92,3 +92,13 @@ export const createList = async (data: ListModel) => {
         throw error;
     }
 }
+
+export const getLists = async () => {
+    try {
+        const lists = await List.find();
+
+        return lists;
+    } catch (error) {
+        throw error;
+    }
+}

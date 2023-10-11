@@ -12,11 +12,12 @@ import LogIn from './pages/login/LogIn.tsx'
 import SignIn from './pages/signin/SignIn.tsx'
 import Home from './pages/home/Home.tsx'
 import Profile from './pages/profile/Profile.tsx'
-import AddState from './pages/add/AddState.tsx'
+import AddList from './pages/listing/AddList.tsx'
+import ViewList from './pages/listing/ViewList.tsx'
+import PrivateRoute from './pages/profile/PrivateRoute.tsx'
 
 import { store } from './app/store.ts'
 import { getUserFromStorage } from './features/user/userSlice.ts'
-import PrivateProfile from './pages/profile/PrivateProfile.tsx'
 
 // Router creation
 const router = createBrowserRouter([
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile',
-        element: <PrivateProfile />,
+        element: <PrivateRoute />,
         children: [
           {
             path: '',
@@ -52,7 +53,23 @@ const router = createBrowserRouter([
       },
       {
         path: '/add',
-        element: <AddState />
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: '',
+            element: <AddList />
+          }
+        ]
+      },
+      {
+        path: '/view',
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: '',
+            element: <ViewList />
+          }
+        ]
       },
     ]
   },

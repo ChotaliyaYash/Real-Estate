@@ -18,15 +18,22 @@ interface errorDataType {
     success: boolean,
 }
 
+// user state type
+interface userStateType {
+    error: catchErrorType | null,
+    loading: boolean,
+    currentUser: userDataType | null
+}
+
 // user reponse type
-export interface userResponseType {
+interface userResponseType {
     success: boolean
     message: string
-    data: Data
+    data: userDataType
 }
 
 // User
-export interface userDataType {
+interface userDataType {
     _id: string
     username: string
     email: string
@@ -34,4 +41,35 @@ export interface userDataType {
     password: string
     createdAt: string
     updatedAt: string
+}
+
+// list state type
+interface listStateType {
+    error: catchErrorType | null,
+    loading: boolean,
+    listing: listModelType[] | null
+}
+
+// list response type
+interface listResponseType {
+    success: boolean
+    message: string
+    data: Data
+}
+
+// list data type
+interface listModelType {
+    name: string;
+    description: string;
+    address: string;
+    regularPrice: number;
+    discountedPrice: number;
+    bathrooms: number;
+    bedrooms: number;
+    furnished: boolean;
+    parking: boolean;
+    type: string;
+    offer: boolean;
+    imageUrls: string[];
+    userRef: string;
 }
