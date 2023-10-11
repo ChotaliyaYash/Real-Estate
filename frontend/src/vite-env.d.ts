@@ -58,7 +58,7 @@ interface listResponseType {
 }
 
 // list data type
-interface listModelType {
+type listModelType = {
     name: string;
     description: string;
     address: string;
@@ -68,7 +68,7 @@ interface listModelType {
     bedrooms: number;
     furnished: boolean;
     parking: boolean;
-    type: string;
+    type: "sell" | "rent";
     offer: boolean;
     imageUrls: string[];
     userRef: string;

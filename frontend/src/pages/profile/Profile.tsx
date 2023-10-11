@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage"
 import { app } from "../../utils/firebaseSetup"
-import { userDataType } from "../../vite-env"
 
 const Profile = () => {
 
