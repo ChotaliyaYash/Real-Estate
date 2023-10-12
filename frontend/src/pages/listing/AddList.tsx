@@ -44,11 +44,7 @@ const AddList = () => {
             const uploadTask = uploadBytesResumable(storageRef, file);
 
             uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log(progress);
-                    // setFilePercent(Math.round(progress));
-                },
+                (_snapshot) => { },
                 (error) => {
                     reject(error)
                 },
@@ -77,8 +73,6 @@ const AddList = () => {
             const file = files[i];
             promises.push(uploadFile(file));
         }
-
-        // console.log(promises);
 
         Promise.all(promises)
             .then((urls) => {

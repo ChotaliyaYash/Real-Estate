@@ -37,8 +37,7 @@ const Profile = () => {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 setFilePercent(Math.round(progress));
             },
-            (error) => {
-                console.log(error);
+            (_error) => {
                 setFileUploadError(true);
             },
             () => {
