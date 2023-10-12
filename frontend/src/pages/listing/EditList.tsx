@@ -1,34 +1,64 @@
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { app } from "../../utils/firebaseSetup";
 import { RiDeleteBin7Fill } from 'react-icons/ri'
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../app/store";
-import { addListAsyncThunk } from '../../features/list/listSlice'
-import { useNavigate } from "react-router-dom";
+import { getListByIdAsyncThunk, updateUserListAsyncThunk } from '../../features/list/listSlice'
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddList = () => {
+const EditList = () => {
+
+    const { id } = useParams();
+
+    const dispatch = useDispatch<AppDispatch>();
+    const [getDataLoading, setGetDataLoading] = useState<boolean>(false);
+    const [getDataError, setGetDataError] = useState<string>("");
 
     const [formData, setFormData] = useState<listModelType>({
         name: "",
         description: "",
         address: "",
-        regularPrice: 50,
-        discountedPrice: 50,
-        bathrooms: 1,
-        bedrooms: 1,
-        furnished: false,
+        type: "sell",
         parking: false,
-        type: "rent",
+        furnished: false,
         offer: false,
+        bedrooms: 1,
+        bathrooms: 1,
+        regularPrice: 1,
+        discountedPrice: 1,
         imageUrls: [],
-        userRef: "",
-        _id: ""
-    })
+        _id: "",
+        userRef: ""
+    });
+
+    useEffect(() => {
+
+        const fatchData = async () => {
+            setGetDataLoading(true);
+            const data = await dispatch(getListByIdAsyncThunk(id!));
+            if (data.meta.requestStatus === "fulfilled") {
+                setFormData(data.payload);
+            }
+            if (data.meta.requestStatus === "rejected") {
+                setGetDataError("Unable to get data!, Please try again later");
+            }
+        }
+        fatchData();
+        setGetDataLoading(false);
+
+    }, [])
+
+    if (getDataLoading) {
+        return <h1>Loading...</h1>
+    }
+
+    if (getDataError) {
+        return <h1>{getDataError}</h1>
+    }
 
     const { error, loading } = useSelector((state: RootState) => state.list);
 
-    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     // file uploadings
@@ -83,7 +113,7 @@ const AddList = () => {
         Promise.all(promises)
             .then((urls) => {
 
-                setFormData({ ...formData, imageUrls: urls as string[] })
+                setFormData({ ...formData, imageUrls: [...formData.imageUrls, ...urls as string[]] })
                 setImageUploadError("");
                 setImageLoading(false);
             })
@@ -125,7 +155,10 @@ const AddList = () => {
             return;
         };
 
-        const res = await dispatch(addListAsyncThunk(formData));
+        const res = await dispatch(updateUserListAsyncThunk({
+            id: id!,
+            data: formData
+        }));
 
         if (res.meta.requestStatus === "fulfilled") {
 
@@ -135,7 +168,8 @@ const AddList = () => {
 
     return (
         <main className="p-3 max-w-4xl mx-auto min-h-screen">
-            <h1 className="text-3xl py-7 text-center font-semibold">Create a Listing</h1>
+
+            <h1 className="text-3xl py-7 text-center font-semibold">Update a Listing</h1>
 
             <form className="flex flex-col sm:flex-row gap-4" onSubmit={handelSubmit}>
 
@@ -226,7 +260,7 @@ const AddList = () => {
 
                     {/* image yploading section */}
                     <div className="flex gap-4">
-                        <input type="file" onChange={e => setFiles(e.target.files)} id="images" accept="image/*" multiple className="p-3 border rounded-lg w-full" required />
+                        <input type="file" onChange={e => setFiles(e.target.files)} id="images" accept="image/*" multiple className="p-3 border rounded-lg w-full" />
                         <button onClick={handelOnUpload} type="button" className="uppercase p-3 text-green-700 border border-green-700 rounded-lg hover:shadow-lg disabled:opacity-80" disabled={imageLoading}>{imageLoading ? "Uploading..." : "Upload"}</button>
                     </div>
 
@@ -250,7 +284,7 @@ const AddList = () => {
                     {imageUploadError && <p className="text-red-700 mt-2">{imageUploadError}</p>}
 
                     {/* submit button */}
-                    <button className="p-3 bg-slate-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80" disabled={loading}>{loading ? "Creating..." : "Create Listing"}</button>
+                    <button className="p-3 bg-slate-700 rounded-lg text-white uppercase hover:opacity-95 disabled:opacity-80" disabled={loading}>{loading ? "Updating..." : "Update Listing"}</button>
 
                     {error && <p className="text-red-700 mt-5">{error.response.data.message}</p>}
                 </div>
@@ -260,4 +294,4 @@ const AddList = () => {
     )
 }
 
-export default AddList
+export default EditList

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createList, getLists, getUserSpecificList, deleteList, updateList } from "../models/listModel";
+import { createList, getLists, getUserSpecificList, deleteList, updateList, getListById } from "../models/listModel";
 import { get } from "mongoose";
 
 // add list
@@ -144,6 +144,22 @@ export const updateListById = async (req: Request, res: Response, next: NextFunc
         res.status(200).json({
             success: true,
             message: "List updated successfully",
+            data: list,
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getAListById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+
+        const list = await getListById(id);
+
+        res.status(200).json({
+            success: true,
+            message: "List fetched successfully",
             data: list,
         })
     } catch (error) {

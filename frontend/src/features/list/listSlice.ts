@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import { addListCall, getListCall, deleteUserListCall, getUserListCall, updateUserListCall } from './listApi'
+import { addListCall, getListCall, deleteUserListCall, getUserListCall, updateUserListCall, getListByIdCall } from './listApi'
 
 const initialState: listStateType = {
     error: null,
@@ -66,6 +66,19 @@ export const updateUserListAsyncThunk = createAsyncThunk(
     async (data: { id: string, data: listModelType }, { rejectWithValue }) => {
         try {
             const res = await updateUserListCall(data.id, data.data);
+            const resData: listResponseType = res.data;
+            return resData.data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+)
+
+export const getListByIdAsyncThunk = createAsyncThunk(
+    "list/getById",
+    async (id: string, { rejectWithValue }) => {
+        try {
+            const res = await getListByIdCall(id);
             const resData: listResponseType = res.data;
             return resData.data;
         } catch (error) {

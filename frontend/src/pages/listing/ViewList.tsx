@@ -18,11 +18,14 @@ const ViewList = () => {
     if (error) return <div>{error.message}</div>
 
     return (
-        <div className="p-7 flex flex-wrap gap-4 max-w-7xl mx-auto">
-            {listing!.map((item) => (
-                <ListingItem key={item._id} item={item} adminCall />
-            ))}
-        </div>
+        <main className="flex flex-col gap-4 max-w-7xl mx-auto p-3 min-h-screen">
+            <h1 className="text-3xl font-semibold text-center px-7 pt-7 pb-4">Your Listings</h1>
+            <div className="p-7 flex flex-wrap">
+                {listing!.map((item) => (
+                    <ListingItem key={item._id} item={item} adminCall />
+                ))}
+            </div>
+        </main>
     )
 }
 

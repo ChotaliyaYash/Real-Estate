@@ -51,8 +51,8 @@ const ListingItem: React.FC<listingItemProps> = ({ item, adminCall = false }) =>
             {
                 adminCall &&
                 <div className='flex gap-3 text-white mt-2'>
-                    <button onClick={handleDelete} className='w-full bg-red-700 p-1 rounded-lg hover:opacity-95'>Delete</button>
-                    <button className='w-full bg-slate-700 p-1 rounded-lg hover:opacity-95'>Edit</button>
+                    <button type='button' onClick={handleDelete} className='w-full bg-red-700 p-1 rounded-lg hover:opacity-95'>Delete</button>
+                    <Link to={`/edit-listing/${item._id}`} className='w-full text-center bg-slate-700 p-1 rounded-lg hover:opacity-95'>Edit</Link>
                 </div>
             }
         </div>

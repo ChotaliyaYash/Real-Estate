@@ -177,3 +177,20 @@ export const updateList = async (id: string, userId: string, data: ListModel) =>
         throw error;
     }
 }
+
+// get single list by id
+export const getListById = async (id: string) => {
+    try {
+        const list = await List.findById(id);
+
+        if (!list) {
+            const error = new Error("List not found");
+            error.name = "notfounderror";
+            throw error;
+        }
+
+        return list;
+    } catch (error) {
+        throw error;
+    }
+}

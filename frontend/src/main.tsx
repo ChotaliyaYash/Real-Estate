@@ -15,10 +15,11 @@ import Profile from './pages/profile/Profile.tsx'
 import AddList from './pages/listing/AddList.tsx'
 import ViewList from './pages/listing/ViewList.tsx'
 import PrivateRoute from './components/PrivateRoute.tsx'
+import SingleListing from './pages/home/SingleListing.tsx'
+import EditList from './pages/listing/EditList.tsx'
 
 import { store } from './app/store.ts'
 import { getUserFromStorage } from './features/user/userSlice.ts'
-import SingleListing from './pages/home/SingleListing.tsx'
 
 // Router creation
 const router = createBrowserRouter([
@@ -35,19 +36,19 @@ const router = createBrowserRouter([
         element: <SingleListing />
       },
       {
-        path: '/about',
+        path: 'about',
         element: <About />
       },
       {
-        path: '/login',
+        path: 'login',
         element: <LogIn />
       },
       {
-        path: '/signin',
+        path: 'signin',
         element: <SignIn />
       },
       {
-        path: '/profile',
+        path: 'profile',
         element: <PrivateRoute />,
         children: [
           {
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: '/add',
+        path: 'add',
         element: <PrivateRoute />,
         children: [
           {
@@ -67,12 +68,22 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: '/view',
+        path: 'view',
         element: <PrivateRoute />,
         children: [
           {
             path: '',
             element: <ViewList />
+          }
+        ]
+      },
+      {
+        path: 'edit-listing',
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: ':id',
+            element: <EditList />
           }
         ]
       },
