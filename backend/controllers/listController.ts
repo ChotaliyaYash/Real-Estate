@@ -92,11 +92,12 @@ export const deleteListById = async (req: Request, res: Response, next: NextFunc
         const { verifiedId } = req.body;
         const { id } = req.params;
 
-        await deleteList(id, verifiedId);
+        const list = await deleteList(id, verifiedId);
 
         res.status(200).json({
             success: true,
             message: "List deleted successfully",
+            data: list
         })
     } catch (error) {
         next(error);

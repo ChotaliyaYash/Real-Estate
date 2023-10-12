@@ -22,7 +22,8 @@ const AddList = () => {
         type: "rent",
         offer: false,
         imageUrls: [],
-        userRef: ""
+        userRef: "",
+        _id: ""
     })
 
     const { error, loading } = useSelector((state: RootState) => state.list);
@@ -126,8 +127,10 @@ const AddList = () => {
 
         const res = await dispatch(addListAsyncThunk(formData));
 
-        res.meta.requestStatus === "fulfilled" && navigate("/");
+        if (res.meta.requestStatus === "fulfilled") {
 
+            navigate(`/listing/${res.payload._id}`);
+        }
     }
 
     return (

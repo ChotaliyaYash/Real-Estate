@@ -67,7 +67,7 @@ export const deleteAccountAsyncThunk = createAsyncThunk(
         try {
             const res = await deleteUserCall(data);
             const resData: userResponseType = res.data;
-            return resData.data;
+            return resData;
         } catch (error) {
             return rejectWithValue(error);
         }

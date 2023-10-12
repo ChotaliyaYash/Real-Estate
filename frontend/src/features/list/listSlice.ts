@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import { addListCall, getListCall } from './listApi'
+import { addListCall, getListCall, deleteUserListCall, getUserListCall, updateUserListCall } from './listApi'
 
 const initialState: listStateType = {
     error: null,
@@ -13,8 +13,6 @@ export const addListAsyncThunk = createAsyncThunk(
     "list/add",
     async (data: listModelType, { rejectWithValue }) => {
         try {
-            console.log("data", data);
-
             const res = await addListCall(data);
             const resData: listResponseType = res.data;
             return resData.data;
@@ -33,6 +31,45 @@ export const getListAsyncThunk = createAsyncThunk(
             return resData.data;
         } catch (error) {
             return error;
+        }
+    }
+)
+
+export const deleteUserListAsyncThunk = createAsyncThunk(
+    "list/delete",
+    async (id: string, { rejectWithValue }) => {
+        try {
+            const res = await deleteUserListCall(id);
+            const resData: listResponseType = res.data;
+            return resData;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+)
+
+export const getUserListAsyncThunk = createAsyncThunk(
+    "list/getUserListing",
+    async () => {
+        try {
+            const res = await getUserListCall();
+            const resData: listResponseType = res.data;
+            return resData.data;
+        } catch (error) {
+            return error;
+        }
+    }
+)
+
+export const updateUserListAsyncThunk = createAsyncThunk(
+    "list/update",
+    async (data: { id: string, data: listModelType }, { rejectWithValue }) => {
+        try {
+            const res = await updateUserListCall(data.id, data.data);
+            const resData: listResponseType = res.data;
+            return resData.data;
+        } catch (error) {
+            return rejectWithValue(error);
         }
     }
 )
@@ -71,7 +108,45 @@ export const listSlice = createSlice({
                 state.error = action.payload as catchErrorType;
             })
 
-        // 
+            // delete user list
+            .addCase(deleteUserListAsyncThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(deleteUserListAsyncThunk.fulfilled, (state, action: PayloadAction<listResponseType>) => {
+                state.loading = false;
+                state.listing = state.listing!.filter((list) => list._id !== action.payload.data._id);
+                state.error = null;
+            })
+            .addCase(deleteUserListAsyncThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as catchErrorType;
+            })
+
+            // get user list
+            .addCase(getUserListAsyncThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getUserListAsyncThunk.fulfilled, (state, action: PayloadAction<listModelType[]>) => {
+                state.loading = false;
+                state.listing = action.payload;
+            })
+            .addCase(getUserListAsyncThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as catchErrorType;
+            })
+
+            // update user list
+            .addCase(updateUserListAsyncThunk.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateUserListAsyncThunk.fulfilled, (state, action: PayloadAction<listModelType>) => {
+                state.loading = false;
+                state.listing = state.listing!.map((list) => list._id === action.payload._id ? action.payload : list);
+            })
+            .addCase(updateUserListAsyncThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as catchErrorType;
+            })
     },
 })
 

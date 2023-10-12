@@ -5,5 +5,17 @@ export const addListCall = async (data: listModelType) => {
 }
 
 export const getListCall = async () => {
-    return axios.get("/api/v1/listing/get")
+    return axios.get("/api/v1/listing/getAll")
+}
+
+export const getUserListCall = async () => {
+    return axios.get("/api/v1/listing/userList")
+}
+
+export const deleteUserListCall = async (id: string) => {
+    return axios.delete(`/api/v1/listing/delete/${id}`)
+}
+
+export const updateUserListCall = async (id: string, data: listModelType) => {
+    return axios.patch(`/api/v1/listing/update/${id}`, data)
 }
